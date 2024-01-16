@@ -1,0 +1,5 @@
+
+
+const appConfig = {
+    name: 'Piclogue'
+}

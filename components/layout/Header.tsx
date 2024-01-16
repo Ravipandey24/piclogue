@@ -1,5 +1,4 @@
-import NextLogo from './NextLogo'
-import SupabaseLogo from './SupabaseLogo'
+import { NextLogo, SupabaseLogo } from "../Icons";
 
 export default function Header() {
   return (
