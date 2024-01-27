@@ -17,6 +17,7 @@ import {
 import { EyeCloseIcon, EyeIcon } from "../Icons";
 import { Spinner } from "@nextui-org/spinner";
 import { supabaseSignUp } from "@/utils/api/auth";
+import { toast } from "sonner";
 
 const SignUpForm = ({}) => {
   const [isSendingRequest, setSendingRequest] = useState<boolean>(false);
@@ -25,12 +26,14 @@ const SignUpForm = ({}) => {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<SignUpFormType>({
     resolver: zodResolver(signUpFormSchema),
     defaultValues: {
       name: "",
       email: "",
       password: "",
+      confirmPassword: "",
     },
   });
   //   const { toast } = useToast();
@@ -38,50 +41,29 @@ const SignUpForm = ({}) => {
   async function onSubmit(formData: SignUpFormType) {
     setSendingRequest(true);
     try {
-      await supabaseSignUp(formData);
+      const { success, message } = await supabaseSignUp(formData);
+      if (success) {
+        toast.success(message);
+      } else {
+        toast.error(message);
+      }
     } catch (error) {
       console.log(error);
     } finally {
       setSendingRequest(false);
+      reset({
+        name: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+      });
     }
-    // try {
-    //   const payload = signUpFormSchema.parse(formData)
-    //   const res = await axios.post("/api/login/signup", payload);
-    //   if (res.data?.success) {
-    //     toast({
-    //       title: "Registered Succesfully!!",
-    //     });
-    //   }
-    // } catch (error) {
-    //   if (error instanceof z.ZodError) {
-    //     toast({
-    //       title: 'Invalid Input!',
-    //     });
-    //     return;
-    //   }
-    //   if (error instanceof AxiosError) {
-    //     toast({
-    //       title: error.response?.data.error,
-    //     });
-    //     return;
-    //   }
-    //   toast({
-    //     title: "Something went wrong!!",
-    //   });
-    // } finally {
-    //   setSendingRequest(false);
-    //   form.reset({
-    //     name: "",
-    //     email: "",
-    //     password: "",
-    //   });
-    // }
   }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <Input
-        placeholder="name"
+        placeholder="username"
         isInvalid={!!errors.name?.message}
         errorMessage={errors.name?.message}
         {...register("name")}

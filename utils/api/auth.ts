@@ -2,11 +2,12 @@
 
 import { headers, cookies } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
-import { redirect } from "next/navigation";
 import { SignInFormType, SignUpFormType } from "@/lib/validations/client-vals";
+import { AuthReturnType } from "@/lib/validations/server-vals";
+import { revalidatePath } from "next/cache";
 
 // supabase auth functions
-export const supabaseSignIn = async ({ email, password }: SignInFormType) => {
+export const supabaseSignIn = async ({ email, password }: SignInFormType): Promise<AuthReturnType> => {
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
 
@@ -16,13 +17,19 @@ export const supabaseSignIn = async ({ email, password }: SignInFormType) => {
   });
 
   if (error) {
-    return redirect("/login?message=Could not authenticate user");
+    return {
+      success: false,
+      message: error.message,
+    }
   }
 
-  return redirect("/");
+  return {
+    success: true,
+    message: "Successfully Authenticated",
+  }
 };
 
-export const supabaseSignUp = async ({ email, password }: SignUpFormType) => {
+export const supabaseSignUp = async ({ name, email, password }: SignUpFormType): Promise<AuthReturnType> => {
   const origin = headers().get("origin");
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
@@ -36,17 +43,23 @@ export const supabaseSignUp = async ({ email, password }: SignUpFormType) => {
   });
 
   if (error) {
-    return redirect("/login?message=Could not authenticate user");
+    return {
+      success: false,
+      message: error.message,
+    }
   }
 
-  return redirect("/login?message=Check email to continue sign in process");
+  return {
+    success: true,
+    message: "Please check your email for the confirmation link.",
+  }
 };
 
 export const supabaseSignOut = async () => {
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
   await supabase.auth.signOut();
-  return redirect("/login");
+  return revalidatePath('/');
 };
 
 export const getSessionUser = async () => {

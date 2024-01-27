@@ -3,7 +3,7 @@ import SignUpForm from "@/components/forms/SignUpForm";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-const page = ({ searchParams }: { searchParams: { message: string } }) => {
+const page = () => {
   return (
     <Tabs
       defaultValue="signin"
@@ -14,31 +14,17 @@ const page = ({ searchParams }: { searchParams: { message: string } }) => {
         <TabsTrigger value="signup">Sign Up</TabsTrigger>
       </TabsList>
       <TabsContent value="signin">
-        <Card>
+        <Card isBlurred>
           <CardContent>
             <SignInForm></SignInForm>
           </CardContent>
-          <CardFooter>
-            {searchParams?.message && (
-              <p className="mt-4 p-4 bg-foreground/10 text-foreground text-center">
-                {searchParams.message}
-              </p>
-            )}
-          </CardFooter>
         </Card>
       </TabsContent>
       <TabsContent value="signup">
-        <Card>
+        <Card isBlurred>
           <CardContent>
             <SignUpForm></SignUpForm>
           </CardContent>
-          <CardFooter>
-            {searchParams?.message && (
-              <p className="mt-4 p-4 bg-foreground/10 text-foreground text-center">
-                {searchParams.message}
-              </p>
-            )}
-          </CardFooter>
         </Card>
       </TabsContent>
     </Tabs>

@@ -3,18 +3,19 @@ import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
 
-export const users = pgTable('users', {
+export const profiles = pgTable('profiles', {
   id: serial('id').primaryKey(),
-  fullName: text('full_name'),
-  phone: varchar('phone', { length: 256 }),
+  username: varchar('username', { length: 256 }),
+  fullname: varchar('fullname', { length: 256 }),
+  email: varchar('email', { length: 256 }),
 });
 
-// User controllers
-export const insertUserSchema = createInsertSchema(users);
-export const selectUserSchema = createSelectSchema(users);
-export const UserIdSchema = selectUserSchema.pick({ id: true });
-export const updateUserSchema = selectUserSchema;
+// Profile controllers
+export const insertProfileSchema = createInsertSchema(profiles);
+export const selectProfileSchema = createSelectSchema(profiles);
+export const profileIdSchema = selectProfileSchema.pick({ id: true });
+export const updateProfileSchema = selectProfileSchema;
 
-export type User = z.infer<typeof selectUserSchema>;
-export type NewUser = z.infer<typeof insertUserSchema>;
-export type UserId = z.infer<typeof UserIdSchema>["id"]
+export type Profile = z.infer<typeof selectProfileSchema>;
+export type NewProfile = z.infer<typeof insertProfileSchema>;
+export type ProfileId = z.infer<typeof profileIdSchema>["id"]
